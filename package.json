@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "build": "mkdir -p public && cp -R assets favicon.svg index.html table public/",
     "start": "node server.mjs"
   }
 }
