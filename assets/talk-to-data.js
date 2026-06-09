@@ -280,10 +280,10 @@
             `Generé ${result.kpis.length} KPIs, un gráfico por ${result.groupLabel || "tipo de camión"} y ${result.outputs.length} outputs reutilizables.`,
             "Estoy colocando los resultados debajo de la tabla."
           ], [
-            { id: "save", label: "Guardar" },
-            { id: "export", label: "Exportar" },
-            { id: "share", label: "Compartir" },
-            { id: "clear", label: "Limpiar" }
+            { id: "save", label: "Save" },
+            { id: "export", label: "Export" },
+            { id: "share", label: "Share" },
+            { id: "clear", label: "Clear" }
           ]);
           try {
             renderInsights(result);
@@ -306,8 +306,8 @@
             `Vista preparada: ${result.savedViewName}.`,
             "Los filtros del agente quedaron reflejados en la tabla."
           ], [
-            { id: "save", label: "Guardar vista" },
-            { id: "clear", label: "Limpiar" }
+            { id: "save", label: "Save view" },
+            { id: "clear", label: "Clear" }
           ]);
           finishChatFlow("Vista actualizada", `La tabla quedó con ${result.rows.length} fila${result.rows.length === 1 ? "" : "s"} visible${result.rows.length === 1 ? "" : "s"}.`);
           return;
@@ -321,9 +321,9 @@
             `Base conectada: ${result.rows.length} documentos de la tabla actual.`,
             "Puedes exportar o compartir este preview."
           ], [
-            { id: "export", label: "Exportar" },
-            { id: "share", label: "Compartir" },
-            { id: "clear", label: "Limpiar" }
+            { id: "export", label: "Export" },
+            { id: "share", label: "Share" },
+            { id: "clear", label: "Clear" }
           ]);
           finishChatFlow("Preview listo", "Preparé los KPIs, el gráfico y el resumen operativo debajo de la tabla.");
           return;
@@ -618,7 +618,7 @@
     const topGroup = groups[0] || { label: "Sin datos", count: 0 };
     const analysisType = intent.analysisType || normalizeAnalysisType(null, question, groupKey);
     const savedViewName = intent.saveOnly
-      ? "Silia - Vista guardada"
+      ? "Silia - Saved view"
       : intent.groupedOnly
         ? `Silia - Documentos por ${groupLabel}`
       : truckType
@@ -841,7 +841,7 @@
 
     chips.push(activeFilters.length ? `Cobertura filtrada: ${coverage}` : `Vista completa: ${coverage}`);
     chips.push(`Top: ${topGroup.label} (${topGroup.count})`);
-    chips.push(`Exportar ${rows.length} fila${rows.length === 1 ? "" : "s"}`);
+    chips.push(`Export ${rows.length} row${rows.length === 1 ? "" : "s"}`);
 
     return chips;
   }
@@ -870,7 +870,7 @@
     const top = result.groups[0] || { label: "Sin datos", count: 0 };
     const concentration = Math.round(top.count / Math.max(rows.length, 1) * 100);
     const recommendation = coverage < 100
-      ? `Guardar esta vista y revisar ${rows.length} fila${rows.length === 1 ? "" : "s"} antes de exportar.`
+      ? `Save this view and review ${rows.length} row${rows.length === 1 ? "" : "s"} before exporting.`
       : concentration >= 40
         ? `Priorizar ${top.label}: concentra ${concentration}% de la vista.`
         : "La distribución está balanceada; conviene monitorear cambios por tipo.";
@@ -1109,7 +1109,7 @@
   function updateSavedViewsButton() {
     if (!savedViewsButton) return;
     const count = loadSavedViews().length;
-    const nextHtml = `${icons.views}<strong>Vistas</strong>${count ? ` <span>${count}</span>` : ""}`;
+    const nextHtml = `${icons.views}<strong>Views</strong>${count ? ` <span>${count}</span>` : ""}`;
     if (savedViewsButton.innerHTML !== nextHtml) {
       savedViewsButton.innerHTML = nextHtml;
     }
@@ -1146,7 +1146,7 @@
     if (truckType && hasWeekFilter) return `Documentos por tipo de camión - esta semana`;
     if (truckType) return `Documentos por tipo de camión - ${truckType}`;
     if (hasWeekFilter) return "Documentos recibidos - esta semana";
-    return displayViewName(result.savedViewName || "Vista guardada");
+    return displayViewName(result.savedViewName || "Saved view");
   }
 
   function openSaveViewModal(defaultName) {
@@ -1156,47 +1156,47 @@
       <div class="ttd-save-modal" role="dialog" aria-modal="true" aria-labelledby="ttd-save-view-title">
         <div class="ttd-save-modal-head">
           <div>
-            <div class="ttd-save-modal-eyebrow">Vista de tabla</div>
-            <h3 id="ttd-save-view-title">Guardar vista</h3>
+            <div class="ttd-save-modal-eyebrow">Table view</div>
+            <h3 id="ttd-save-view-title">Save view</h3>
           </div>
-          <button type="button" class="ttd-save-modal-close" aria-label="Cerrar">${icons.close}</button>
+          <button type="button" class="ttd-save-modal-close" aria-label="Close">${icons.close}</button>
         </div>
         <form class="ttd-save-modal-form">
-          <label for="ttd-save-view-name">Nombre</label>
+          <label for="ttd-save-view-name">Name</label>
           <input id="ttd-save-view-name" name="viewName" type="text" value="${escapeHtml(defaultName)}" autocomplete="off" />
-          <label for="ttd-save-view-description">Descripción <span>opcional</span></label>
-          <textarea id="ttd-save-view-description" name="description" rows="3" placeholder="Ej. Vista para revisar documentos recibidos y coordinar seguimiento por tipo de camión."></textarea>
+          <label for="ttd-save-view-description">Description <span>optional</span></label>
+          <textarea id="ttd-save-view-description" name="description" rows="3" placeholder="E.g. View to review received documents and coordinate follow-up by truck type."></textarea>
           <fieldset class="ttd-save-modal-fieldset">
-            <legend>Visibilidad</legend>
+            <legend>Visibility</legend>
             <div class="ttd-save-segmented">
               <label>
                 <input type="radio" name="visibility" value="private" checked />
-                <span>Privada</span>
+                <span>Private</span>
               </label>
               <label>
                 <input type="radio" name="visibility" value="team" />
-                <span>Equipo</span>
+                <span>Team</span>
               </label>
             </div>
           </fieldset>
           <div class="ttd-save-options">
             <label>
               <input type="checkbox" name="includeFilters" checked />
-              <span>Incluir filtros</span>
+              <span>Include filters</span>
             </label>
             <label>
               <input type="checkbox" name="includeChart" />
-              <span>Incluir gráfico</span>
+              <span>Include chart</span>
             </label>
             <label>
               <input type="checkbox" name="notifyTeam" />
-              <span>Notificar al equipo</span>
+              <span>Notify team</span>
             </label>
           </div>
-          <div class="ttd-save-modal-meta">${currentResult.rows.length} fila${currentResult.rows.length === 1 ? "" : "s"} · ${currentResult.filters.filter(filter => filter.label !== "Nota").map(filter => `${filter.label}: ${filter.value}`).join(" · ") || "Vista actual"}</div>
+          <div class="ttd-save-modal-meta">${currentResult.rows.length} row${currentResult.rows.length === 1 ? "" : "s"} · ${currentResult.filters.filter(filter => filter.label !== "Nota").map(filter => `${filter.label}: ${filter.value}`).join(" · ") || "Current view"}</div>
           <div class="ttd-save-modal-actions">
-            <button type="button" class="is-secondary">Cancelar</button>
-            <button type="submit" class="is-primary">${icons.save}<span>Guardar vista</span></button>
+            <button type="button" class="is-secondary">Cancel</button>
+            <button type="submit" class="is-primary">${icons.save}<span>Save view</span></button>
           </div>
         </form>
       </div>
@@ -1235,7 +1235,7 @@
   function commitSavedView(options) {
     const name = options.name?.trim();
     if (!name) {
-      message("Guardado cancelado. La vista necesita un nombre.");
+      message("Save canceled. The view needs a name.");
       return;
     }
 
@@ -1263,10 +1263,10 @@
     writeSavedViews(views.slice(0, 12));
     currentResult.savedViewName = view.name;
     renderInsights(currentResult);
-    const visibilityLabel = view.visibility === "team" ? "del equipo" : "privada";
-    message(`Guardada como vista reutilizable ${visibilityLabel}. Puedes encontrarla en Vistas.`);
+    const visibilityLabel = view.visibility === "team" ? "team" : "private";
+    message(`Saved as a reusable ${visibilityLabel} view. You can find it under Views.`);
     closePanel();
-    showOutsideFeedback("Vista guardada", `"${displayViewName(view.name)}" quedó guardada como vista ${visibilityLabel}.`);
+    showOutsideFeedback("View saved", `"${displayViewName(view.name)}" was saved as a ${visibilityLabel} view.`);
   }
 
   function toggleSavedViewsPanel() {
@@ -1284,8 +1284,8 @@
     savedViewsPanel = el("div", "ttd-saved-views-panel");
     savedViewsPanel.innerHTML = `
       <div class="ttd-saved-views-head">
-        <strong>Vistas guardadas</strong>
-        <button type="button" aria-label="Cerrar vistas">x</button>
+        <strong>Saved views</strong>
+        <button type="button" aria-label="Close views">x</button>
       </div>
       ${views.length ? `
         <div class="ttd-saved-views-list">
@@ -1296,13 +1296,13 @@
                 <span>${escapeHtml(describeSavedView(view))}</span>
               </div>
               <div class="ttd-saved-view-actions">
-                <button type="button" data-saved-action="apply">Aplicar</button>
-                <button type="button" data-saved-action="delete">Borrar</button>
+                <button type="button" data-saved-action="apply">Apply</button>
+                <button type="button" data-saved-action="delete">Delete</button>
               </div>
             </article>
           `).join("")}
         </div>
-      ` : `<p class="ttd-saved-views-empty">Aún no hay vistas guardadas.</p>`}
+      ` : `<p class="ttd-saved-views-empty">No saved views yet.</p>`}
     `;
 
     savedViewsPanel.querySelector(".ttd-saved-views-head button")?.addEventListener("click", () => {
@@ -1333,7 +1333,7 @@
   function describeSavedView(view) {
     const filter = view.filters?.find(item => item.label !== "Nota");
     const count = view.rowFiles?.length || 0;
-    return `${filter ? `${filter.label}: ${filter.value} · ` : ""}${count} fila${count === 1 ? "" : "s"}`;
+    return `${filter ? `${filter.label}: ${filter.value} · ` : ""}${count} row${count === 1 ? "" : "s"}`;
   }
 
   function applySavedView(id) {
@@ -1348,7 +1348,7 @@
     const groups = groupBy(rows, groupKey);
     const topGroup = groups[0] || { label: "Sin datos", count: 0 };
     currentResult = {
-      question: view.question || `Aplicar vista ${view.name}`,
+      question: view.question || `Apply view ${view.name}`,
       filters: view.filters || [{ label: "Vista", value: view.name }],
       rows,
       allRows,
@@ -1372,13 +1372,13 @@
     renderInsights(currentResult);
     savedViewsPanel?.remove();
     savedViewsPanel = null;
-    message(`Vista aplicada: ${view.name}.`);
+    message(`View applied: ${view.name}.`);
   }
 
   function deleteSavedView(id) {
     writeSavedViews(loadSavedViews().filter(view => view.id !== id));
     renderSavedViewsPanel();
-    message("Vista guardada eliminada.");
+    message("Saved view deleted.");
   }
 
   function updateTotalLabel(filtered, total) {
@@ -1426,10 +1426,10 @@
       ${renderAnalysisBody(result)}
 
       <div class="ttd-action-row">
-        ${actionButton("save", "Guardar vista")}
-        ${actionButton("export", "Exportar CSV")}
-        ${actionButton("share", "Compartir")}
-        ${actionButton("clear", "Limpiar", true)}
+        ${actionButton("save", "Save view")}
+        ${actionButton("export", "Export CSV")}
+        ${actionButton("share", "Share")}
+        ${actionButton("clear", "Clear", true)}
       </div>
     `;
 
@@ -1463,7 +1463,7 @@
           <div class="ttd-chart-card-head">
             <div class="ttd-card-title">Resumen por ${escapeHtml(result.groupLabel || "tipo de camión")}</div>
             <div class="ttd-chart-toggle" role="group" aria-label="Tipo de gráfica">
-              <button type="button" class="is-active" data-chart-mode="bars">Barras</button>
+              <button type="button" class="is-active" data-chart-mode="bars">Bars</button>
               <button type="button" data-chart-mode="pie">Pie</button>
             </div>
           </div>
@@ -1622,9 +1622,9 @@
       </div>
 
       <div class="ttd-action-row">
-        ${actionButton("save", "Guardar vista")}
-        ${actionButton("export", "Exportar filas")}
-        ${actionButton("clear", "Limpiar cambios", true)}
+        ${actionButton("save", "Save view")}
+        ${actionButton("export", "Export rows")}
+        ${actionButton("clear", "Clear changes", true)}
       </div>
     `;
 
@@ -1678,9 +1678,9 @@
       </div>
 
       <div class="ttd-action-row">
-        ${actionButton("share", "Compartir reporte")}
-        ${actionButton("export", "Exportar dataset")}
-        ${actionButton("clear", "Limpiar", true)}
+        ${actionButton("share", "Share report")}
+        ${actionButton("export", "Export dataset")}
+        ${actionButton("clear", "Clear", true)}
       </div>
     `;
 
@@ -1759,51 +1759,51 @@
       <div class="ttd-save-modal ttd-share-modal" role="dialog" aria-modal="true" aria-labelledby="ttd-share-view-title">
         <div class="ttd-save-modal-head">
           <div>
-            <div class="ttd-save-modal-eyebrow">Compartir vista</div>
-            <h3 id="ttd-share-view-title">Crear enlace compartible</h3>
+            <div class="ttd-save-modal-eyebrow">Share view</div>
+            <h3 id="ttd-share-view-title">Create shareable link</h3>
           </div>
-          <button type="button" class="ttd-save-modal-close" aria-label="Cerrar">${icons.close}</button>
+          <button type="button" class="ttd-save-modal-close" aria-label="Close">${icons.close}</button>
         </div>
         <form class="ttd-save-modal-form">
-          <label for="ttd-share-view-name">Nombre</label>
+          <label for="ttd-share-view-name">Name</label>
           <input id="ttd-share-view-name" name="shareName" type="text" value="${escapeHtml(viewName)}" autocomplete="off" />
-          <label for="ttd-share-message">Mensaje <span>opcional</span></label>
-          <textarea id="ttd-share-message" name="message" rows="3" placeholder="Ej. Revisa esta vista con los KPIs y filtros aplicados."></textarea>
+          <label for="ttd-share-message">Message <span>optional</span></label>
+          <textarea id="ttd-share-message" name="message" rows="3" placeholder="E.g. Review this view with the applied KPIs and filters."></textarea>
           <fieldset class="ttd-save-modal-fieldset">
-            <legend>Permiso</legend>
+            <legend>Permission</legend>
             <div class="ttd-save-segmented">
               <label>
                 <input type="radio" name="permission" value="read" checked />
-                <span>Solo lectura</span>
+                <span>Read only</span>
               </label>
               <label>
                 <input type="radio" name="permission" value="duplicate" />
-                <span>Puede duplicar</span>
+                <span>Can duplicate</span>
               </label>
             </div>
           </fieldset>
           <div class="ttd-save-options">
             <label>
               <input type="checkbox" name="includeFilters" checked />
-              <span>Incluir filtros</span>
+              <span>Include filters</span>
             </label>
             <label>
               <input type="checkbox" name="includeKpis" checked />
-              <span>Incluir KPIs</span>
+              <span>Include KPIs</span>
             </label>
             <label>
               <input type="checkbox" name="includeChart" checked />
-              <span>Incluir gráfica</span>
+              <span>Include chart</span>
             </label>
             <label>
               <input type="checkbox" name="includeSummary" checked />
-              <span>Incluir resumen</span>
+              <span>Include summary</span>
             </label>
           </div>
-          <div class="ttd-save-modal-meta">${currentResult.rows.length} fila${currentResult.rows.length === 1 ? "" : "s"} · ${currentResult.groupLabel ? `Resumen por ${currentResult.groupLabel}` : "Vista actual"}</div>
+          <div class="ttd-save-modal-meta">${currentResult.rows.length} row${currentResult.rows.length === 1 ? "" : "s"} · ${currentResult.groupLabel ? `Summary by ${currentResult.groupLabel}` : "Current view"}</div>
           <div class="ttd-save-modal-actions">
-            <button type="button" class="is-secondary">Cancelar</button>
-            <button type="submit" class="is-primary">${icons.share}<span>Crear enlace</span></button>
+            <button type="button" class="is-secondary">Cancel</button>
+            <button type="submit" class="is-primary">${icons.share}<span>Create link</span></button>
           </div>
         </form>
       </div>
@@ -1843,20 +1843,20 @@
     const shareId = `share-${Date.now().toString(36)}`;
     const params = new URLSearchParams({ sharedView: shareId });
     const link = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-    const permissionLabel = options.permission === "duplicate" ? "puede duplicar" : "solo lectura";
+    const permissionLabel = options.permission === "duplicate" ? "can duplicate" : "read only";
     const text = [
       `${options.name.trim() || displayViewName(result.savedViewName)}`,
       options.message.trim(),
-      `Permiso: ${permissionLabel}`,
-      `Enlace: ${link}`,
-      options.includeSummary ? `Resumen: ${result.summary}` : "",
+      `Permission: ${permissionLabel}`,
+      `Link: ${link}`,
+      options.includeSummary ? `Summary: ${result.summary}` : "",
       options.includeKpis ? `KPIs: ${result.kpis.map(kpi => `${kpi.label}: ${kpi.value}`).join(" · ")}` : ""
     ].filter(Boolean).join("\n");
 
     navigator.clipboard?.writeText(text).catch(() => undefined);
     closePanel();
-    showOutsideFeedback("Enlace listo", `"${options.name.trim() || displayViewName(result.savedViewName)}" quedó lista para compartir con permiso ${permissionLabel}.`);
-    message("Vista compartida. El enlace está listo para enviar.");
+    showOutsideFeedback("Link ready", `"${options.name.trim() || displayViewName(result.savedViewName)}" is ready to share with ${permissionLabel} permission.`);
+    message("View shared. The link is ready to send.");
   }
 
   function copyShareText() {
